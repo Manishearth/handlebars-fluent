@@ -6,7 +6,6 @@ os:
   - linux
 
 script:
-  - cargo build
-  - cargo test
-
+  - cargo build && cargo build --all-features
+  - cargo test && cargo test --all-features
 

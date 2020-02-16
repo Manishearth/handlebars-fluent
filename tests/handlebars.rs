@@ -1,3 +1,5 @@
+#![cfg(feature = "handlebars")]
+
 use handlebars::*;
 use handlebars_fluent::*;
 
@@ -8,7 +10,7 @@ use serde_json::json;
 #[test]
 fn test_english() {
     let mut handlebars = Handlebars::new();
-    handlebars.register_helper("fluent", Box::new(FluentHelper::new(load())));
+    handlebars.register_helper("fluent", Box::new(FluentHelperFunction::new(load())));
     let data = json!({"lang": "en-US"});
     assert_eq!(
         handlebars
@@ -53,7 +55,7 @@ fn test_english() {
 #[test]
 fn test_french() {
     let mut handlebars = Handlebars::new();
-    handlebars.register_helper("fluent", Box::new(FluentHelper::new(load())));
+    handlebars.register_helper("fluent", Box::new(FluentHelperFunction::new(load())));
     let data = json!({"lang": "fr"});
     assert_eq!(
         handlebars
@@ -98,7 +100,7 @@ fn test_french() {
 #[test]
 fn test_chinese() {
     let mut handlebars = Handlebars::new();
-    handlebars.register_helper("fluent", Box::new(FluentHelper::new(load())));
+    handlebars.register_helper("fluent", Box::new(FluentHelperFunction::new(load())));
     let data = json!({"lang": "zh-TW"});
     assert_eq!(
         handlebars

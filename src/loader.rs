@@ -31,7 +31,7 @@ pub trait Loader {
 ///
 /// fn init() {
 ///     let loader = create_loader();
-///     let helper = FluentHelper::new(loader);
+///     let helper = FluentHelperFunction::new(loader);
 /// }
 /// ```
 ///
@@ -41,7 +41,7 @@ pub trait Loader {
 ///
 /// Some Fluent users have a share "core.ftl" file that contains strings used by all locales,
 /// for example branding information. They also may want to define custom functions on the bundle.
-/// 
+///
 /// This can be done with an extended invocation:
 ///
 /// ```rust
@@ -52,7 +52,7 @@ pub trait Loader {
 ///
 /// fn init() {
 ///     let loader = create_loader();
-///     let helper = FluentHelper::new(loader);
+///     let helper = FluentHelperFunction::new(loader);
 /// }
 /// ```
 ///
