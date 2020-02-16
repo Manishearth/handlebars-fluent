@@ -1,12 +1,12 @@
 [package]
-name = "handlebars-fluent"
+name = "fluent-template-helper"
 version = "0.2.0"
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 edition = "2018"
 description = "Handlebars helpers for the Fluent internationalization framework"
 license = "MIT/Apache-2.0"
-documentation = "https://docs.rs/handlebars-fluent/"
-repository = "https://github.com/manishearth/handlebars-fluent"
+documentation = "https://docs.rs/fluent-template-helper/"
+repository = "https://github.com/manishearth/fluent-template-helper"
 keywords = ["handlebars", "fluent", "internationalization", "localization"]
 categories = ["internationalization", "localization", "template-engine"]
 

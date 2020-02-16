@@ -16,9 +16,9 @@
 //!
 //! ```rust
 //! # #[cfg(feature = "handlebars")] {
-//! use handlebars_fluent::FluentHelperFunction;
+//! use fluent_template_helper::FluentHelperFunction;
 //!
-//! handlebars_fluent::simple_loader!(create_loader, "./locales/", "en-US");
+//! fluent_template_helper::simple_loader!(create_loader, "./locales/", "en-US");
 //!
 //! fn init(engine: &mut handlebars::Handlebars) {
 //!     // Pick your engine
@@ -43,9 +43,9 @@
 //!
 //! ```rust
 //! # #[cfg(feature = "tera")] {
-//! use handlebars_fluent::FluentHelperFunction;
+//! use fluent_template_helper::FluentHelperFunction;
 //!
-//! handlebars_fluent::simple_loader!(create_loader, "./locales/", "en-US");
+//! fluent_template_helper::simple_loader!(create_loader, "./locales/", "en-US");
 //!
 //! fn init(engine: &mut tera::Tera) {
 //!     // Pick your engine

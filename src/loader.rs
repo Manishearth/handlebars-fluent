@@ -25,7 +25,7 @@ pub trait Loader {
 /// Usage:
 ///
 /// ```rust
-/// use handlebars_fluent::*;
+/// use fluent_template_helper::*;
 ///
 /// simple_loader!(create_loader, "./tests/locales/", "en-US");
 ///
@@ -45,7 +45,7 @@ pub trait Loader {
 /// This can be done with an extended invocation:
 ///
 /// ```rust
-/// use handlebars_fluent::*;
+/// use fluent_template_helper::*;
 ///
 /// simple_loader!(create_loader, "./tests/locales/", "en-US", core: "./tests/core.ftl",
 ///                customizer: |bundle| {bundle.add_function("FOOBAR", |_values, _named| {unimplemented!()}); });
