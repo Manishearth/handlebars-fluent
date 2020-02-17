@@ -3,11 +3,11 @@ name = "fluent-template-helper"
 version = "0.2.0"
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 edition = "2018"
-description = "Handlebars helpers for the Fluent internationalization framework"
+description = "Template engine helpers for the Fluent internationalization framework"
 license = "MIT/Apache-2.0"
 documentation = "https://docs.rs/fluent-template-helper/"
 repository = "https://github.com/manishearth/fluent-template-helper"
-keywords = ["handlebars", "fluent", "internationalization", "localization"]
+keywords = ["handlebars", "fluent", "internationalization", "localization", "tera"]
 categories = ["internationalization", "localization", "template-engine"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
