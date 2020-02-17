@@ -219,12 +219,12 @@ fn read_from_dir<P: AsRef<Path>>(dirname: P) -> io::Result<Vec<FluentResource>> 
     Ok(result)
 }
 
-pub fn create_bundle(
+pub fn create_bundle<'a>(
     lang: &str,
-    resources: &'static Vec<FluentResource>,
-    core_resource: Option<&'static FluentResource>,
-    customizer: &impl Fn(&mut FluentBundle<'static>),
-) -> FluentBundle<'static> {
+    resources: &'a Vec<FluentResource>,
+    core_resource: Option<&'a FluentResource>,
+    customizer: &impl Fn(&mut FluentBundle),
+) -> FluentBundle<'a> {
     let mut bundle = FluentBundle::new(&[lang]);
     if let Some(core) = core_resource {
         bundle
@@ -256,11 +256,11 @@ pub fn build_resources(dir: &str) -> HashMap<String, Vec<FluentResource>> {
     all_resources
 }
 
-pub fn build_bundles(
-    resources: &'static HashMap<String, Vec<FluentResource>>,
-    core_resource: Option<&'static FluentResource>,
-    customizer: impl Fn(&mut FluentBundle<'static>),
-) -> HashMap<String, FluentBundle<'static>> {
+pub fn build_bundles<'a>(
+    resources: &'a HashMap<String, Vec<FluentResource>>,
+    core_resource: Option<&'a FluentResource>,
+    customizer: impl Fn(&mut FluentBundle),
+) -> HashMap<String, FluentBundle<'a>> {
     let mut bundles = HashMap::new();
     for (ref k, ref v) in &*resources {
         bundles.insert(
