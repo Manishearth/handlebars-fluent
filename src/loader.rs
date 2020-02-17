@@ -221,7 +221,7 @@ fn read_from_dir<P: AsRef<Path>>(dirname: P) -> io::Result<Vec<FluentResource>> 
 
 pub fn create_bundle<'a>(
     lang: &str,
-    resources: &'a Vec<FluentResource>,
+    resources: &'a [FluentResource],
     core_resource: Option<&'a FluentResource>,
     customizer: &impl Fn(&mut FluentBundle),
 ) -> FluentBundle<'a> {
