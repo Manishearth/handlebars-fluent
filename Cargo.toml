@@ -13,14 +13,14 @@ categories = ["internationalization", "localization", "template-engine"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-handlebars = "2"
-lazy_static = "1.2.0"
-fluent = "0.11"
+handlebars = "2.0"
+lazy_static = "1.4"
+fluent = "0.16"
 fluent-bundle = "0.11"
-fluent-syntax = "0.9.3"
-fluent-langneg = "0.12.0"
+fluent-syntax = "0.11"
+fluent-langneg = "0.12"
 serde_json = "1.0"
-unic-langid = { version = "0.8.0", features = ["macros"] }
+unic-langid = { version = "0.8", features = ["macros"] }
 
 [dev-dependencies]
-tempfile = "3.1.0"
+tempfile = "3.3"
