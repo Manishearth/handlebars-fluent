@@ -98,14 +98,8 @@ impl<L: Loader + Send + Sync> HelperDef for FluentHelper<L> {
                         )));
                     }
                     let id = if let Some(el) = block.params.get(0) {
-                        if let Parameter::Literal(ref s) = *el {
-                            if let Json::String(ref s) = *s {
-                                s
-                            } else {
-                                return Err(RenderError::new(
-                                    "{{fluentparam}} takes a string parameter",
-                                ));
-                            }
+                        if let Parameter::Literal(Json::String(ref s)) = *el {
+                            s
                         } else {
                             return Err(RenderError::new(
                                 "{{fluentparam}} takes a string parameter",
@@ -117,7 +111,7 @@ impl<L: Loader + Send + Sync> HelperDef for FluentHelper<L> {
                     if let Some(ref tpl) = block.template {
                         let mut s = StringOutput::default();
                         tpl.render(reg, context, rcx, &mut s)?;
-                        args.insert(&*id, FluentValue::String(s.s.into()));
+                        args.insert(id, FluentValue::String(s.s.into()));
                     }
                 }
             }
@@ -131,7 +125,7 @@ impl<L: Loader + Send + Sync> HelperDef for FluentHelper<L> {
             .parse()
             .expect("Language not valid identifier");
 
-        let response = self.loader.lookup(&lang, &id, args.as_ref());
+        let response = self.loader.lookup(&lang, id, args.as_ref());
         out.write(&response).map_err(RenderError::with)
     }
 }

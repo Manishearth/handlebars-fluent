@@ -148,7 +148,7 @@ impl SimpleLoader {
             if let Some(message) = bundle.get_message(text_id).and_then(|m| m.value) {
                 let mut errors = Vec::new();
 
-                let value = bundle.format_pattern(&message, dbg!(args), &mut errors);
+                let value = bundle.format_pattern(message, dbg!(args), &mut errors);
 
                 if errors.is_empty() {
                     Some(value.into())
@@ -273,10 +273,10 @@ pub fn build_bundles(
     customizer: impl Fn(&mut FluentBundle<&'static FluentResource>),
 ) -> HashMap<LanguageIdentifier, FluentBundle<&'static FluentResource>> {
     let mut bundles = HashMap::new();
-    for (k, ref v) in resources.iter() {
+    for (k, v) in resources.iter() {
         bundles.insert(
             k.clone(),
-            create_bundle(k.clone(), &v, core_resource, &customizer),
+            create_bundle(k.clone(), v, core_resource, &customizer),
         );
     }
     bundles
@@ -298,7 +298,7 @@ mod tests {
         std::fs::write(dir.path().join("core.ftl"), "foo = bar\n".as_bytes())?;
         std::fs::write(dir.path().join("other.ftl"), "bar = baz\n".as_bytes())?;
         std::fs::write(dir.path().join("invalid.txt"), "baz = foo\n".as_bytes())?;
-        std::fs::write(dir.path().join(".binary_file.swp"), &[0, 1, 2, 3, 4, 5])?;
+        std::fs::write(dir.path().join(".binary_file.swp"), [0, 1, 2, 3, 4, 5])?;
 
         let result = read_from_dir(dir.path())?;
         assert_eq!(2, result.len()); // Doesn't include the binary file or the txt file
