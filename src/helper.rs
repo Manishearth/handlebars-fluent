@@ -117,7 +117,7 @@ impl<L: Loader + Send + Sync> HelperDef for FluentHelper<L> {
                     if let Some(ref tpl) = block.template {
                         let mut s = StringOutput::default();
                         tpl.render(reg, context, rcx, &mut s)?;
-                        args.insert(&*id, FluentValue::String(s.s.into()));
+                        args.insert(id, FluentValue::String(s.s.into()));
                     }
                 }
             }
@@ -131,7 +131,7 @@ impl<L: Loader + Send + Sync> HelperDef for FluentHelper<L> {
             .parse()
             .expect("Language not valid identifier");
 
-        let response = self.loader.lookup(&lang, &id, args.as_ref());
+        let response = self.loader.lookup(&lang, id, args.as_ref());
         out.write(&response).map_err(RenderError::with)
     }
 }
