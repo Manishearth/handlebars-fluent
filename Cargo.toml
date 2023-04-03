@@ -1,6 +1,6 @@
 [package]
 name = "handlebars-fluent"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 edition = "2018"
 description = "Handlebars helpers for the Fluent internationalization framework"
