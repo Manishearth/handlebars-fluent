@@ -237,6 +237,9 @@ pub fn create_bundle(
     customizer: &impl Fn(&mut FluentBundle<&'static FluentResource>),
 ) -> FluentBundle<&'static FluentResource> {
     let mut bundle: FluentBundle<&'static FluentResource> = FluentBundle::new(&[lang]);
+
+    // handlebars variables may be used for URLs/etc as well
+    bundle.set_use_isolating(false);
     if let Some(core) = core_resource {
         bundle
             .add_resource(core)
