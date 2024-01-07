@@ -36,7 +36,7 @@ impl Output for StringOutput {
 impl<L: Loader + Send + Sync> HelperDef for FluentHelper<L> {
     fn call<'reg: 'rc, 'rc>(
         &self,
-        h: &Helper<'reg, 'rc>,
+        h: &Helper<'rc>,
         reg: &'reg Handlebars,
         context: &'rc Context,
         rcx: &mut RenderContext<'reg, 'rc>,
