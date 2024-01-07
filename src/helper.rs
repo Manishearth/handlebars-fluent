@@ -104,7 +104,7 @@ impl<L: Loader + Send + Sync> HelperDef for FluentHelper<L> {
                         ))
                         .into());
                     }
-                    let id = if let Some(el) = block.params.get(0) {
+                    let id = if let Some(el) = block.params.first() {
                         if let Parameter::Literal(Json::String(ref s)) = *el {
                             s
                         } else {
