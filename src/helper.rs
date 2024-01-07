@@ -1,5 +1,5 @@
 use handlebars::{
-    Context, Handlebars, Helper, HelperDef, HelperResult, Output, RenderContext, RenderError,
+    Context, Handlebars, Helper, HelperDef, HelperResult, Output, RenderContext, RenderErrorReason,
     Renderable,
 };
 
@@ -45,21 +45,27 @@ impl<L: Loader + Send + Sync> HelperDef for FluentHelper<L> {
         let id = if let Some(id) = h.param(0) {
             id
         } else {
-            return Err(RenderError::new(
-                "{{fluent}} must have at least one parameter",
-            ));
+            return Err(RenderErrorReason::ParamNotFoundForIndex("fluent", 0).into());
         };
 
         if id.relative_path().is_some() {
-            return Err(RenderError::new(
-                "{{fluent}} takes a string parameter with no path",
-            ));
+            return Err(RenderErrorReason::ParamTypeMismatchForName(
+                "fluent",
+                "0".into(),
+                "string with no path".into(),
+            )
+            .into());
         }
 
         let id = if let Json::String(ref s) = *id.value() {
             s
         } else {
-            return Err(RenderError::new("{{fluent}} takes a string parameter"));
+            return Err(RenderErrorReason::ParamTypeMismatchForName(
+                "fluent",
+                "0".into(),
+                "string".into(),
+            )
+            .into());
         };
 
         let mut args = if h.hash().is_empty() {
@@ -92,21 +98,27 @@ impl<L: Loader + Send + Sync> HelperDef for FluentHelper<L> {
             for element in &tpl.elements {
                 if let TemplateElement::HelperBlock(ref block) = element {
                     if block.name != Parameter::Name("fluentparam".into()) {
-                        return Err(RenderError::new(format!(
+                        return Err(RenderErrorReason::Other(format!(
                             "{{{{fluent}}}} can only contain {{{{fluentparam}}}} elements, not {}",
                             block.name.expand_as_name(reg, context, rcx).unwrap()
-                        )));
+                        ))
+                        .into());
                     }
                     let id = if let Some(el) = block.params.get(0) {
                         if let Parameter::Literal(Json::String(ref s)) = *el {
                             s
                         } else {
-                            return Err(RenderError::new(
-                                "{{fluentparam}} takes a string parameter",
-                            ));
+                            return Err(RenderErrorReason::ParamTypeMismatchForName(
+                                "fluentparam",
+                                "0".into(),
+                                "string".into(),
+                            )
+                            .into());
                         }
                     } else {
-                        return Err(RenderError::new("{{fluentparam}} must have one parameter"));
+                        return Err(
+                            RenderErrorReason::ParamNotFoundForIndex("fluentparam", 0).into()
+                        );
                     };
                     if let Some(ref tpl) = block.template {
                         let mut s = StringOutput::default();
@@ -127,6 +139,6 @@ impl<L: Loader + Send + Sync> HelperDef for FluentHelper<L> {
 
         let response = self.loader.lookup(&lang, id, args.as_ref());
         out.write(&response)
-            .map_err(|e| RenderError::from_error("failed to write response", e))
+            .map_err(|e| RenderErrorReason::NestedError(Box::new(e)).into())
     }
 }
