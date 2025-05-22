@@ -3,10 +3,9 @@ use handlebars::{
     Renderable,
 };
 
-use fluent_bundle::FluentValue;
+use fluent_bundle::{FluentArgs, FluentValue};
 use handlebars::template::{Parameter, TemplateElement};
 use serde_json::Value as Json;
-use std::collections::HashMap;
 use std::io;
 
 use crate::Loader;
@@ -71,28 +70,23 @@ impl<L: Loader + Send + Sync> HelperDef for FluentHelper<L> {
         let mut args = if h.hash().is_empty() {
             None
         } else {
-            let map = h
-                .hash()
-                .iter()
-                .filter_map(|(k, v)| {
-                    let json = v.value();
-                    let val = match json {
-                        // `Number::as_f64` can't fail here because we haven't
-                        // enabled `arbitrary_precision` feature
-                        // in `serde_json`.
-                        Json::Number(n) => n.as_f64().unwrap().into(),
-                        Json::String(s) => s.to_owned().into(),
-                        _ => return None,
-                    };
-                    Some((&**k, val))
-                })
-                .collect();
-            Some(map)
+            let mut fluent_args = FluentArgs::new();
+            for (k, v) in h.hash() {
+                let k = k.to_owned();
+                match v.value() {
+                    // `Number::as_f64` can't fail here because we haven't
+                    // enabled `arbitrary_precision` feature in `serde_json`.
+                    Json::Number(n) => fluent_args.set(k, n.as_f64().unwrap()),
+                    Json::String(s) => fluent_args.set(k, s.to_owned()),
+                    _ => continue,
+                }
+            }
+            Some(fluent_args)
         };
 
         if let Some(tpl) = h.template() {
             if args.is_none() {
-                args = Some(HashMap::new());
+                args = Some(FluentArgs::new());
             }
             let args = args.as_mut().unwrap();
             for element in &tpl.elements {
@@ -123,7 +117,7 @@ impl<L: Loader + Send + Sync> HelperDef for FluentHelper<L> {
                     if let Some(ref tpl) = block.template {
                         let mut s = StringOutput::default();
                         tpl.render(reg, context, rcx, &mut s)?;
-                        args.insert(id, FluentValue::String(s.s.into()));
+                        args.set(id, FluentValue::String(s.s.into()));
                     }
                 }
             }

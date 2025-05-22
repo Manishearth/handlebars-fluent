@@ -6,7 +6,7 @@ use std::io::prelude::*;
 use std::path::Path;
 
 use fluent_bundle::concurrent::FluentBundle;
-use fluent_bundle::{FluentResource, FluentValue};
+use fluent_bundle::{FluentArgs, FluentResource};
 use fluent_langneg::negotiate_languages;
 
 pub use unic_langid::{langid, langids, LanguageIdentifier};
@@ -15,12 +15,8 @@ pub use unic_langid::{langid, langids, LanguageIdentifier};
 ///
 /// Use [SimpleLoader] if you just need the basics
 pub trait Loader {
-    fn lookup(
-        &self,
-        lang: &LanguageIdentifier,
-        text_id: &str,
-        args: Option<&HashMap<&str, FluentValue>>,
-    ) -> String;
+    fn lookup(&self, lang: &LanguageIdentifier, text_id: &str, args: Option<&FluentArgs>)
+        -> String;
 }
 
 /// Loads Fluent data at runtime via `lazy_static` to produce a loader.
@@ -142,10 +138,10 @@ impl SimpleLoader {
         &self,
         lang: &LanguageIdentifier,
         text_id: &str,
-        args: Option<&HashMap<&str, FluentValue>>,
+        args: Option<&FluentArgs>,
     ) -> Option<String> {
         if let Some(bundle) = self.bundles.get(lang) {
-            if let Some(message) = bundle.get_message(text_id).and_then(|m| m.value) {
+            if let Some(message) = bundle.get_message(text_id).and_then(|m| m.value()) {
                 let mut errors = Vec::new();
 
                 let value = bundle.format_pattern(message, args, &mut errors);
@@ -171,7 +167,7 @@ impl SimpleLoader {
         &self,
         lang: &LanguageIdentifier,
         text_id: &str,
-        args: Option<&HashMap<&str, FluentValue>>,
+        args: Option<&FluentArgs>,
     ) -> Option<String> {
         for l in self.fallbacks.get(lang).expect("language not found") {
             if let Some(val) = self.lookup_single_language(l, text_id, args) {
@@ -189,7 +185,7 @@ impl Loader for SimpleLoader {
         &self,
         lang: &LanguageIdentifier,
         text_id: &str,
-        args: Option<&HashMap<&str, FluentValue>>,
+        args: Option<&FluentArgs>,
     ) -> String {
         for l in self.fallbacks.get(lang).expect("language not found") {
             if let Some(val) = self.lookup_single_language(l, text_id, args) {
@@ -236,7 +232,8 @@ pub fn create_bundle(
     core_resource: Option<&'static FluentResource>,
     customizer: &impl Fn(&mut FluentBundle<&'static FluentResource>),
 ) -> FluentBundle<&'static FluentResource> {
-    let mut bundle: FluentBundle<&'static FluentResource> = FluentBundle::new(&[lang]);
+    let mut bundle: FluentBundle<&'static FluentResource> =
+        FluentBundle::new_concurrent([lang].to_vec());
 
     // handlebars variables may be used for URLs/etc as well
     bundle.set_use_isolating(false);
@@ -306,7 +303,7 @@ mod tests {
         let result = read_from_dir(dir.path())?;
         assert_eq!(2, result.len()); // Doesn't include the binary file or the txt file
 
-        let mut bundle = FluentBundle::new(&[unic_langid::langid!("en-US")]);
+        let mut bundle = FluentBundle::new_concurrent((&[unic_langid::langid!("en-US")]).to_vec());
         for resource in &result {
             bundle.add_resource(resource).unwrap();
         }
@@ -317,7 +314,7 @@ mod tests {
         assert_eq!(
             "bar",
             bundle.format_pattern(
-                bundle.get_message("foo").and_then(|m| m.value).unwrap(),
+                bundle.get_message("foo").and_then(|m| m.value()).unwrap(),
                 None,
                 &mut errors
             )
@@ -326,7 +323,7 @@ mod tests {
         assert_eq!(
             "baz",
             bundle.format_pattern(
-                bundle.get_message("bar").and_then(|m| m.value).unwrap(),
+                bundle.get_message("bar").and_then(|m| m.value()).unwrap(),
                 None,
                 &mut errors
             )
