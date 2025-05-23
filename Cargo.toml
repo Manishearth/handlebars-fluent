@@ -1,6 +1,6 @@
 [package]
 name = "handlebars-fluent"
-version = "0.5.0"
+version = "0.5.1"
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 edition = "2018"
 rust-version = "1.73.0"
